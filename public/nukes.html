@@ -3,14 +3,40 @@
 <head>
     <meta charset="UTF-8">
 
-
     <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/ol.css">
+    <link rel="stylesheet" href="./css/styles.css">
+
     <title>Nuke the world !</title>
 </head>
 <body>
-    <h1 class="display-4">Get ready to nuke the world !</h1>
+
+    <header class="jumbotron bg-primary jumbotron-fluid">
+        <div class="container">
+            <h1 class="display-3 text-white text-center">Get ready to nuke the world !</h1>
+            <p class="lead text-white text-center">Choose your nuke, launch it on the world and count your victims.</p>
+        </div>
+    </header>
+
+    <div class="container-fuild">
+        <div class="row">
+            <div class="col-3">
+                <div class="btn-group-vertical" role="group" aria-label="Basic example">
+                    <button type="button" class="btn btn-secondary">Left</button>
+                    <button type="button" class="btn btn-secondary">Middle</button>
+                    <button type="button" class="btn btn-secondary">Right</button>
+                </div>
+            </div>
+
+            <div class="col-9">
+                <div id="map-container"></div>
+            </div>
+        </div>
+    </div>
 
     <script src="/js/jquery.min.js"></script>
     <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/ol.js"></script>
+    <script src="/js/map.js"></script>
 </body>
 </html>

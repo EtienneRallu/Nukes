@@ -7,14 +7,25 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+// Loading required HTML
 app.use(express.static(path.join(__dirname, 'public')));
 
-// redirect bootstrap JS
+// Loading required JS Files
+// Bootstrap
 app.use('/js', express.static(__dirname + '/node_modules/bootstrap/dist/js'));
-// redirect JS jQuery
+// jQuery
 app.use('/js', express.static(__dirname + '/node_modules/jquery/dist'));
-// redirect CSS bootstrap
+// Openlayers
+app.use('/js', express.static(__dirname + '/node_modules/openlayers/dist'));
+// Custom JS
+app.use('/js', express.static(__dirname + '/public/js'));
+
+// Loading required CSS Files
+// Bootstrap
 app.use('/css', express.static(__dirname + '/node_modules/bootstrap/dist/css'));
+// Openlayers
+app.use('/css', express.static(__dirname + '/node_modules/openlayers/dist'));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
