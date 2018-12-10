@@ -1,16 +1,18 @@
-let mapLayer = new ol.layer.Tile({
-    source: new ol.source.OSM()
-});
+import {Map, View} from 'ol';
+import TileLayer from 'ol/layer/Tile';
+import XYZ from 'ol/source/XYZ';
 
-let view = new ol.View({
-    center: ol.proj.fromLonLat([8.19, 46.80]),
-    zoom: 7
-});
-
-let map = new ol.Map({
+new Map({
     target: 'map-container',
     layers: [
-        mapLayer,
+        new TileLayer({
+            source: new XYZ({
+                url: 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+            })
+        })
     ],
-    view: view,
+    view: new View({
+        center: [0, 0],
+        zoom: 2
+    })
 });
