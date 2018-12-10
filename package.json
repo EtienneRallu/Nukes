@@ -5,9 +5,9 @@
   "main": "app.js",
   "private": true,
   "scripts": {
-    "start": "npm run webpack-start & node ./bin/www",
-    "dev": "SET DEBUG=nukes & node ./bin/www",
-    "nodemon": "npm run webpack-dev & nodemon --exec npm run dev",
+    "start": "npm run webpack-prod & node ./bin/www",
+    "dev-simple": "SET DEBUG=nukes & node ./bin/www",
+    "dev": "npm run webpack-dev & nodemon --exec npm run dev-simple",
     "webpack-dev": "webpack --config webpack.config.js --mode development",
     "webpack-prod": "webpack --config webpack.config.js --mode production"
   },
