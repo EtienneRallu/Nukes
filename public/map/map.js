@@ -1,6 +1,8 @@
 import {Map, View} from 'ol';
+import {fromLonLat} from 'ol/proj';
 import TileLayer from 'ol/layer/Tile';
-import XYZ from 'ol/source/XYZ';
+import TileWMS from 'ol/source/TileWMS';
+import OSM from 'ol/source/OSM';
 
 let isOSMDisplayed = true;
 let isBingDisplayed = false;
@@ -10,10 +12,10 @@ let isPopDensDisplayed = false;
  * Creating the OpenStreetMap layer
  * @type {ol.layer.Tile}
  */
-let mapLayer = new ol.layer.Tile({
+let mapLayer = new TileLayer({
     visible: isOSMDisplayed,
     preload: Infinity,
-    source: new ol.source.OSM()
+    source: new OSM()
 });
 
 /**
@@ -21,16 +23,16 @@ let mapLayer = new ol.layer.Tile({
  * @type {ol.source.ImageWMS}
  */
 
-let densityWMSSource = new ol.source.ImageWMS({
+let densityWMSSource = new TileWMS({
     url: 'http://sedac.ciesin.columbia.edu/geoserver/wms',
     params: {
         'LAYERS': 'gpw-v3:gpw-v3-population-density_2000',
         'TILED': true,
-    },
+    }
 });
 
 
-let densityWMSLayer = new ol.layer.Image({
+let densityWMSLayer = new TileLayer({
         visible: isPopDensDisplayed,
         preload: Infinity,
         source: densityWMSSource
@@ -46,10 +48,10 @@ getUserPosition()
 
         /**
          * Generating the view and centering the position on the user
-         * @type {ol.View}
+         * @type {View}
          */
-        let view = new ol.View({
-            center: ol.proj.fromLonLat([userPosLon, userPosLat]),
+        let view = new View({
+            center: fromLonLat([userPosLon, userPosLat]),
             zoom: 6
         });
 
@@ -66,19 +68,6 @@ getUserPosition()
             view: view,
       });
 });
-
-function selectOSM() {
-    console.log('Clicked OSM');
-    
-}
-
-function selectBing() {
-
-}
-
-function selectPopDensity() {
-    isPopDensDisplayed = !isPopDensDisplayed;
-}
 
 /**
  *
