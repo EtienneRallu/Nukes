@@ -3,40 +3,70 @@ import {fromLonLat} from 'ol/proj';
 import TileLayer from 'ol/layer/Tile';
 import TileWMS from 'ol/source/TileWMS';
 import OSM from 'ol/source/OSM';
+import BingMaps from 'ol/source/BingMaps';
 
-let isOSMDisplayed = true;
-let isBingDisplayed = false;
-let isPopDensDisplayed = false;
+let layers = [];
+const layersName = ['osm', 'aerial', 'label', 'pop'];
 
 /**
  * Creating the OpenStreetMap layer
  * @type {ol.layer.Tile}
  */
 let mapLayer = new TileLayer({
-    visible: isOSMDisplayed,
+    visible: false,
     preload: Infinity,
     source: new OSM()
 });
 
 /**
- * Creating the WMS world's density source
+ * Creating the Bing Aerial Layer
+ * @type {ol.layer.Tile}
+ */
+let aerialLayer = new TileLayer({
+    visible: false,
+    preload: Infinity,
+    source: new BingMaps({
+        key: 'Al4Lwx9RuLedLsGGSwRbGSnvDqSQoHuMo955gLixhSrP1znUz_9K2qibzSnbSeaB',
+        imagerySet: 'Aerial',
+    })
+});
+
+/**
+ * Creating the Bing Aerial with label layer
+ * @type {layer.Tile | TileLayer}
+ */
+let labelLayer = new TileLayer({
+    visible: false,
+    preload: Infinity,
+    source: new BingMaps({
+        key: 'Al4Lwx9RuLedLsGGSwRbGSnvDqSQoHuMo955gLixhSrP1znUz_9K2qibzSnbSeaB',
+        imagerySet: 'AerialWithLabels',
+    })
+});
+
+/**
+ * Creating the WMS world's density layer from a given source
  * @type {ol.source.ImageWMS}
  */
 
-let densityWMSSource = new TileWMS({
-    url: 'http://sedac.ciesin.columbia.edu/geoserver/wms',
-    params: {
-        'LAYERS': 'gpw-v3:gpw-v3-population-density_2000',
-        'TILED': true,
-    }
+let densityWMSLayer = new TileLayer({
+    visible: false,
+    preload: Infinity,
+    source: new TileWMS({
+        url: 'http://sedac.ciesin.columbia.edu/geoserver/wms',
+        params: {
+            'LAYERS': 'gpw-v3:gpw-v3-population-density_2000',
+            'TILED': true,
+        }
+    })
 });
 
+layers.push(mapLayer);
+layers.push(aerialLayer);
+layers.push(labelLayer);
+layers.push(densityWMSLayer);
 
-let densityWMSLayer = new TileLayer({
-        visible: isPopDensDisplayed,
-        preload: Infinity,
-        source: densityWMSSource
-    });
+layers[0].setVisible(true);
 
 /**
  * Get user position and center the map on it
@@ -61,13 +91,43 @@ getUserPosition()
          */
         new Map({
             target: 'map-container',
-            layers: [
-                mapLayer,
-                densityWMSLayer,
-            ],
+            layers: layers,
             view: view,
       });
 });
+
+document
+    .getElementById('osm')
+    .addEventListener('click', () => {
+        selectVisibleLayer('osm');
+    });
+
+document
+    .getElementById('aerial')
+    .addEventListener('click', () => {
+        selectVisibleLayer('aerial');
+    });
+
+document
+    .getElementById('label')
+    .addEventListener('click', () => {
+        selectVisibleLayer('label');
+    });
+
+document
+    .getElementById('pop')
+    .addEventListener('click', () => {
+        selectVisibleLayer('pop');
+    });
+
+function selectVisibleLayer(name) {
+    layers.forEach(layer => layer.setVisible(false));
+    layersName.forEach(layer => {
+        document.getElementById(layer).setAttribute('class', 'btn btn-secondary btn-lg');
+    });
+    document.getElementById(name).setAttribute('class', 'btn btn-primary btn-lg');
+    layers[layersName.findIndex(layer => layer === name)].setVisible(true);
+}
 
 /**
  *
