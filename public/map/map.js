@@ -1,14 +1,23 @@
 import {Map, View} from 'ol';
 import {fromLonLat} from 'ol/proj';
+import {Vector as VectorLayer} from 'ol/layer.js';
 import TileLayer from 'ol/layer/Tile';
 import TileWMS from 'ol/source/TileWMS';
 import OSM from 'ol/source/OSM';
 import BingMaps from 'ol/source/BingMaps';
+import Feature from 'ol/Feature';
+import Point from 'ol/geom/Point';
+import Circle from 'ol/geom/Circle';
+import Icon from 'ol/style/Icon';
+import Style from 'ol/style/Style';
+import Fill from 'ol/style/Fill';
+import Stroke from 'ol/style/Stroke';
+import VectorSource from 'ol/source/Vector';
 
 const nukes = require('../json/nukes').nukes;
 
 let layers = [];
-const layersName = ['osm', 'aerial', 'label', 'pop'];
+const layersName = ['osm', 'aerial', 'label', 'pop', 'vector'];
 let selectedNuke;
 
 /**
@@ -64,10 +73,18 @@ let densityWMSLayer = new TileLayer({
     })
 });
 
+let vectorSource = new VectorSource({});
+
+let vectorLayer = new VectorLayer({
+    visible: true,
+    source: vectorSource,
+});
+
 layers.push(mapLayer);
 layers.push(aerialLayer);
 layers.push(labelLayer);
 layers.push(densityWMSLayer);
+layers.push(vectorLayer);
 
 layers[0].setVisible(true);
 
@@ -75,6 +92,8 @@ let view = new View({
     center: fromLonLat([0,0]),
     zoom: 6,
 });
+
+let map;
 
 /**
  * Get user position and center the map on it
@@ -97,12 +116,21 @@ getUserPosition()
          * Generating the map
          * @type {ol.Map}
          */
-        new Map({
+        map = new Map({
             target: 'map-container',
             layers: layers,
             view: view,
-      });
-});
+        });
+
+        /**
+         * Get user position and add a marker
+         */
+
+        map.on('click', (event) => {
+            createPin(event.coordinate);
+        });
+    });
+
 
 /**
  * Add buttons for every nukes in the JSON and listen on click on this button
@@ -268,8 +296,11 @@ document
 
 function selectVisibleLayer(name) {
     layers.forEach(layer => layer.setVisible(false));
+    layers[layersName.findIndex(layer => layer === 'vector')].setVisible(true);
     layersName.forEach(layer => {
-        document.getElementById(layer).setAttribute('class', 'btn btn-secondary btn-lg');
+        if (layer !== 'vector') {
+            document.getElementById(layer).setAttribute('class', 'btn btn-secondary btn-lg');
+        }
     });
     document.getElementById(name).setAttribute('class', 'btn btn-primary btn-lg');
     layers[layersName.findIndex(layer => layer === name)].setVisible(true);
@@ -304,4 +335,75 @@ function getUserPosition() {
         }
 
     });
+}
+
+function createPin(coordinates) {
+
+    if(selectedNuke) {
+
+        const calcRadius = calculateBlastRadius(selectedNuke.blastYield);
+        const conversionValue = 0.685;
+
+        //TODO : Add geocoding
+        let iconFeature = new Feature({
+            geometry: new Point(coordinates),
+            name: 'Foo',
+        });
+
+        iconFeature.setStyle(new Style({
+            image: new Icon({
+                src: 'http://www.mistercosmic.com/images/Nuke_256.png',
+                scale: 0.25,
+            })
+        }));
+
+        let fireball = new Feature({
+            geometry: new Circle(coordinates, calcRadius.fireball/conversionValue),
+            name: 'Complete Damage',
+        });
+
+        fireball.setStyle(new Style({
+            stroke: new Stroke({color: [221, 18, 4]})
+        }));
+
+        let airBlast = new Feature({
+            geometry: new Circle(coordinates, calcRadius.airBlast/conversionValue),
+            name: 'Complete Damage',
+        });
+
+        airBlast.setStyle(new Style({
+            stroke: new Stroke({color: [232, 150, 9]})
+        }));
+
+        let thermal = new Feature({
+            geometry: new Circle(coordinates, calcRadius.thermal/conversionValue),
+            name: 'Complete Damage',
+        });
+
+        vectorSource.addFeatures([iconFeature, fireball, airBlast, thermal]);
+    } else {
+        alert('Select a nuke to launch on the world');
+    }
+}
+
+/**
+ * Calculating the different radius of the fireball, blast, thermal damage and light damage for an explosion
+ * @param blastYield
+ * @returns {{fireball: number, airBlast: number, thermal: number, light: number}}
+ */
+
+function calculateBlastRadius(blastYield) {
+
+    const yield1 = blastYield * 400;
+    const yield2 = blastYield * 1000;
+
+    const fireball = Math.round((Math.pow(yield2,0.4)*110/3.3));
+    const airBlast = Math.round((Math.pow(yield1,0.33))*1000);
+    const thermal = Math.round((Math.pow(yield1,0.41))*1000);
+
+    return {
+        'fireball': fireball,
+        'airBlast': airBlast,
+        'thermal': thermal,
+    }
 }
