@@ -5,8 +5,11 @@ import TileWMS from 'ol/source/TileWMS';
 import OSM from 'ol/source/OSM';
 import BingMaps from 'ol/source/BingMaps';
 
+const nukes = require('../json/nukes').nukes;
+
 let layers = [];
 const layersName = ['osm', 'aerial', 'label', 'pop'];
+let selectedNuke;
 
 /**
  * Creating the OpenStreetMap layer
@@ -96,6 +99,124 @@ getUserPosition()
       });
 });
 
+/**
+ * Add buttons for every nukes in the JSON and listen on click on this button
+ */
+
+for (const i in nukes) {
+    const btn = document.createElement("BUTTON");
+    const name = document.createTextNode(nukes[i].name);
+
+    btn.appendChild(name);
+    btn.setAttribute('class', 'btn btn-outline-warning mx-1 my-1');
+    btn.setAttribute('id', nukes[i].name);
+
+    document
+        .getElementById('devicesBtn')
+        .appendChild(btn);
+
+    /*
+    Listen on clicks made on the created button and update the alert with the correct information and set buttons in the correct color
+     */
+    document
+        .getElementById(nukes[i].name)
+        .addEventListener('click', () => {
+
+            selectedNuke = nukes[i];
+
+            /*
+            Setting the alert
+             */
+            const alert = document.createElement("DIV");
+            const alertTxt = document.createTextNode(`Where do you want to launch your ${nukes[i].name} with a blast yield of ${nukes[i].blastYield} megatons`);
+
+            alert.appendChild(alertTxt);
+            alert.setAttribute('class', 'alert alert-danger my-2');
+            alert.setAttribute('role', 'alert');
+            alert.setAttribute('id', 'alert');
+
+            const alertToDelete = document.getElementById('alert');
+            if(alertToDelete) {
+                alertToDelete.parentNode.removeChild(alertToDelete);
+            }
+
+            const contentElement = document.getElementById('content');
+            contentElement.insertBefore(alert, contentElement.childNodes[0]);
+
+            /*
+            Resetting the colours
+             */
+
+            for (const j in nukes) {
+                document.getElementById(nukes[j].name).setAttribute('class', 'btn btn-outline-warning mx-1 my-1');
+                if (j === i) {
+                    document.getElementById(nukes[j].name).setAttribute('class', 'btn btn-outline-danger mx-1 my-1');
+                }
+            }
+
+            /*
+            Setting the card
+             */
+
+            const cardToDelete = document.getElementById('card');
+            if(cardToDelete) {
+                cardToDelete.parentNode.removeChild(cardToDelete);
+            }
+
+            const card = document.createElement("DIV");
+            card.setAttribute('class', 'card my-3');
+            card.setAttribute('id', 'card');
+            card.setAttribute('style', 'width: 50%; margin: 0 auto');
+
+            const img = document.createElement("IMG");
+            img.setAttribute('class', 'card-img-top');
+            img.setAttribute('alt', nukes[i].name);
+            img.setAttribute('src', nukes[i].img);
+
+            const body = document.createElement("DIV");
+            body.setAttribute('class', 'card-body');
+
+            const title = document.createElement("H5");
+            const titleTxt = document.createTextNode(nukes[i].name);
+            title.appendChild(titleTxt);
+            title.setAttribute('class', 'card-title');
+
+            body.appendChild(title);
+
+            const contentBody = document.createElement("P");
+            const contentTxt1 = document.createTextNode(`Produced in : ${nukes[i].yearProduced}`);
+            const contentTxt2 = document.createTextNode(`From : ${nukes[i].country}`);
+            const contentTxt3 = document.createTextNode(`Blast yield : ${nukes[i].blastYield} megatons`);
+            const contentTxt4 = document.createTextNode(`${nukes[i].description}`);
+            contentBody.appendChild(contentTxt1);
+            contentBody.appendChild(contentTxt2);
+            contentBody.appendChild(contentTxt3);
+            contentBody.appendChild(contentTxt4);
+            contentBody.setAttribute('class', 'card-text');
+
+            body.appendChild(contentBody);
+
+            if(nukes[i].lat !== 0 && nukes[i].lon !== 0 ) {
+                const testSite = document.createElement("BUTTON");
+                const testSiteTxt = document.createTextNode("View Test Site");
+                testSite.appendChild(testSiteTxt);
+                testSite.setAttribute('class', 'btn btn-outline-primary');
+
+                body.appendChild(testSite);
+            }
+
+            card.appendChild(img);
+            card.appendChild(body);
+
+            document
+                .getElementById('devices')
+                .appendChild(card);
+        });
+}
+
+/**
+ * Event listener for clicks on layers' selector buttons
+ */
 document
     .getElementById('osm')
     .addEventListener('click', () => {
@@ -114,11 +235,17 @@ document
         selectVisibleLayer('label');
     });
 
+
 document
     .getElementById('pop')
     .addEventListener('click', () => {
         selectVisibleLayer('pop');
     });
+
+/**
+ * Set the correct layer to be visible and set the correct button to be toggled
+ * @param name
+ */
 
 function selectVisibleLayer(name) {
     layers.forEach(layer => layer.setVisible(false));

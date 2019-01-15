@@ -1,12 +1,124 @@
-[
-  {
-    "name": "",
-    "country": "",
-    "blastYield": "",
-    "yearProduced": "",
-    "description": ""
-  },
-  {
-
-  }
-]
+{
+  "nukes" : [
+    {
+      "name": "Little Boy",
+      "title": "Bomb dropped on Hiroshima",
+      "type": "Air dropped gravity bomb",
+      "country": "United States of America",
+      "blastYield": 0.015,
+      "yearProduced": 1945,
+      "longitude": 34.385573,
+      "latitude": 132.455371,
+      "img": "https://upload.wikimedia.org/wikipedia/commons/6/6a/Little_boy.jpg",
+      "description": "Little Boy was the code name for the type of atomic bomb dropped on the Japanese city of Hiroshima on 6 August 1945 during World War II. It was the first nuclear weapon used in warfare. The bomb was dropped by the Boeing B-29 Superfortress Enola Gay piloted by Colonel Paul W. Tibbets, Jr., commander of the 509th Composite Group of the United States Army Air Forces. It exploded with an energy of approximately 15 kilotons of TNT (63 TJ) and caused widespread death and destruction throughout the city. The Hiroshima bombing was the second nuclear explosion in history, after the Trinity test, and the first uranium-based detonation."
+    },
+    {
+      "name": "Fat Man",
+      "title": "Bomb dropped on Nagasaki",
+      "type": "Air dropped gravity bomb",
+      "country": "United States of America",
+      "blastYield": 0.021,
+      "yearProduced": 1945,
+      "longitude": 32.743545,
+      "latitude": 129.874755,
+      "img": "https://media.npr.org/assets/img/2011/10/11/fat_man_nuclear_bomb_wide-2ef5944e81c7bcfcd2daec9a808f64fad555de58-s1100-c15.jpg",
+      "description": "Fat Man was the codename for the nuclear bomb that was detonated over the Japanese city of Nagasaki by the United States on 9 August 1945. It was the second of the only two nuclear weapons ever used in warfare, the first being Little Boy, and its detonation marked the third nuclear explosion in history. It was built by scientists and engineers at Los Alamos Laboratory using plutonium from the Hanford Site, and it was dropped from the Boeing B-29 Superfortress Bockscar piloted by Major Charles Sweeney."
+    },
+    {
+      "name": "Ivy Mike",
+      "title": "First thermonuclear device full-test",
+      "type": "Test device",
+      "country": "United States of America",
+      "blastYield": 10.4,
+      "yearProduced": 1952,
+      "longitude": 11.666667,
+      "latitude": 162.186944,
+      "img": "https://upload.wikimedia.org/wikipedia/commons/6/6c/Ivy_Mike_Sausage_device.jpg",
+      "description": "Ivy Mike was the codename given to the first test of a full-scale thermonuclear device, in which part of the explosive yield comes from nuclear fusion. It was detonated on November 1, 1952 by the United States on the island of Elugelab in Enewetak Atoll, in the Pacific Ocean, as part of Operation Ivy. It was the first full test of the Teller–Ulam design, a staged fusion device."
+    },
+    {
+      "name": "Castle Bravo",
+      "title": "Most powerful United States' test",
+      "type": "Test device",
+      "country": "United States of America",
+      "blastYield": 15,
+      "yearProduced": 1954,
+      "longitude": 11.697222,
+      "latitude": 165.271944,
+      "img": "https://upload.wikimedia.org/wikipedia/commons/f/f3/Castle_Bravo_Declassified_Film_46th_second.png",
+      "description": "Castle Bravo was the first in a series of high-yield thermonuclear weapon design tests conducted by the United States at Bikini Atoll, Marshall Islands, as part of Operation Castle. Detonated on March 1, 1954, the device was the most powerful nuclear device detonated by the United States and its first lithium deuteride fueled thermonuclear weapon. Castle Bravo's yield was 15 megatons of TNT, 2.5 times the predicted 6.0 megatons, due to unforeseen additional reactions involving 7Li, which led to the unexpected radioactive contamination of areas to the east of Bikini Atoll."
+    },
+    {
+      "name": "B83",
+      "title": "Most powerful US weapon in active service",
+      "type": "Nuclear Bomb",
+      "country": "United States of America",
+      "blastYield": 1.2,
+      "yearProduced": 1983,
+      "longitude": 0,
+      "latitude": 0,
+      "img": "https://upload.wikimedia.org/wikipedia/commons/e/e1/B83_nuclear_bomb_trainer.jpg",
+      "description": "The B83 thermonuclear weapon is a variable-yield unguided bomb developed by the United States in the late 1970s, entering service in 1983. With a maximum yield of 1.2 megatonnes of TNT (5.0 PJ, 75 times the 16 kt yield of the atomic bomb Little Boy dropped on Hiroshima on 6 August 1945), it is the most powerful nuclear free-fall weapon in the United States arsenal. It was designed at Lawrence Livermore National Laboratory, and the first underground test detonation of the production B83 took place on 15 December 1984 in Nevada at Area U19ac"
+    },
+    {
+      "name": "Davy Crockett",
+      "title": "Tactical recoilless nuclear gun",
+      "type": "Nuclear Gun",
+      "country": "United States of America",
+      "blastYield": 0.00001,
+      "yearProduced": 1962,
+      "longitude": 0,
+      "latitude": 0,
+      "img": "https://upload.wikimedia.org/wikipedia/commons/4/43/DavyCrockettBomb.jpg",
+      "description": "Davy Crockett was a recoilless gun on a tripod for firing the M-388 atomic round The M-28 or M-29 Davy Crockett Weapon System was the tactical nuclear recoilless gun (smoothbore) for firing the M-388 nuclear projectile that was deployed by the United States during the Cold War. It was one of the smallest nuclear weapon systems ever built, with a yield between 10 and 20 tons TNT equivalent (40–80 gigajoules). It is named after American folk hero, soldier, and congressman Davy Crockett."
+    },
+    {
+      "name": "RDS-1",
+      "title": "First USSR's nuclear test",
+      "type": "Air dropped gravity bomb",
+      "country": "Soviet Union",
+      "blastYield": 0.022,
+      "yearProduced": 1949,
+      "longitude": 77.814167,
+      "latitude": 50.437500,
+      "img": "https://upload.wikimedia.org/wikipedia/en/2/23/Casing_for_the_first_Soviet_atomic_bomb%2C_RDS-1.jpg",
+      "description": "The RDS-1 was the nuclear bomb used in the Soviet Union's first nuclear weapon test. The United States assigned it the code-name Joe-1, in reference to Joseph Stalin. It was detonated on 29 August 1949 at 7:00 a.m., at Semipalatinsk, Kazakh SSR, after top-secret research and development as part of the Soviet atomic bomb project."
+    },
+    {
+      "name": "Tsar Bomba",
+      "title": "Most powerful nuclear weapon ever detonated",
+      "type": "Test device",
+      "country": "Soviet Union",
+      "blastYield": 50,
+      "yearProduced": 1961,
+      "longitude": 54.981667,
+      "latitude": 73.807222,
+      "img": "https://upload.wikimedia.org/wikipedia/commons/f/f2/Tsar_Bomba_Revised.jpg",
+      "description": "The Soviet RDS-220 hydrogen bomb (code name Ivan or Vanya), known by Western nations as Tsar Bomba (Russian: Царь-бо́мба, tr. Tsar'-bómba, IPA: [t͡sarʲ ˈbombə], lit. Tsar bomb), allegedly was the most powerful nuclear weapon ever created. Tested on 30 October 1961 as an experimental verification of calculation principles and multi-stage thermonuclear weapon designs, it also remains the most powerful explosive ever detonated. It was also referred to as Kuzma's mother (Russian: Ку́зькина ма́ть, tr. Kúz'kina mát', IPA: [ˈkusʲkʲɪnə ˈmatʲ]), possibly referring to First secretary Nikita Khrushchev's promise to \"show the United States a Kuzma's mother\" (an idiom roughly translating to \"We'll show you\") at a 1960 session of United Nations General Assembly."
+    },
+    {
+      "name": "Air-Sol Moyenne Portée",
+      "title": "French nuclear weapon in active service",
+      "type": "Air to surface nuclear missile",
+      "country": "France",
+      "blastYield": 0.1,
+      "yearProduced": 1986,
+      "longitude": 0,
+      "latitude": 0,
+      "img": "https://upload.wikimedia.org/wikipedia/commons/4/44/SG1059332.JPG",
+      "description": "The Air-Sol Moyenne Portée (ASMP; medium-range air to surface missile) is a French nuclear air-launched cruise missile. In French nuclear doctrine it is called a pre-strategic weapon, the last-resort warning shot prior to a full-scale employment of strategic nuclear weapons. The missile's construction was contracted to Aérospatiale's Tactical Missile Division, now part of MBDA. The missile cost $600 million to develop."
+    },
+    {
+      "name": "2017 North Korean nuclear test",
+      "title": "Most recent nuclear test",
+      "type": "Test device",
+      "country": "North Korea",
+      "blastYield": 0.8,
+      "yearProduced": 2017,
+      "longitude": 129.036000,
+      "latitude": 41.343000,
+      "img": "http://www.theragblog.com/wp-content/uploads/2017/09/Kim-Jong-Un-Rocket-Man-DonkeyHotey.jpg",
+      "description": "Claimed to be a hydrogen bomb (but may only be a boosted fission weapon rather than an actual staged Teller–Ulam thermonuclear weapon). The blast yield is subject to debate between 70 and 280 kilotons"
+    }
+  ]
+}

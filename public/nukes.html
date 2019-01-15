@@ -17,10 +17,11 @@
         </div>
     </header>
 
-    <div class="container-fuild">
+    <div class="container-fuild" id="content">
         <div class="row">
-            <div class="col-3">
-                <div class="btn-group-vertical" role="group" aria-label="Basic example">
+            <div class="col-2">
+                <h3 class="text-primary text-left">Choose your layer</h3>
+                <div class="btn-group-vertical" role="group" aria-label="Layers possibility">
                     <button type="button" class="btn btn-primary btn-lg" id="osm">OpenStreetMap</button>
                     <button type="button" class="btn btn-secondary btn-lg" id="aerial">Aerial</button>
                     <button type="button" class="btn btn-secondary btn-lg" id="label">Aerial with Label</button>
@@ -28,8 +29,13 @@
                 </div>
             </div>
 
-            <div class="col-9">
+            <div class="col-10">
                 <div id="map-container"></div>
+            </div>
+        </div>
+        <div id="devices">
+            <h3 class="text-primary text-center">Select your device</h3>
+            <div class="btn-group-horizontal btn-group-sm text-center" role="group" aria-label="Basic example" id="devicesBtn">
             </div>
         </div>
     </div>
