@@ -71,6 +71,11 @@ layers.push(densityWMSLayer);
 
 layers[0].setVisible(true);
 
+let view = new View({
+    center: fromLonLat([0,0]),
+    zoom: 6,
+});
+
 /**
  * Get user position and center the map on it
  */
@@ -83,7 +88,7 @@ getUserPosition()
          * Generating the view and centering the position on the user
          * @type {View}
          */
-        let view = new View({
+        view = new View({
             center: fromLonLat([userPosLon, userPosLat]),
             zoom: 6
         });
@@ -118,8 +123,7 @@ for (const i in nukes) {
     /*
     Listen on clicks made on the created button and update the alert with the correct information and set buttons in the correct color
      */
-    document
-        .getElementById(nukes[i].name)
+    btn
         .addEventListener('click', () => {
 
             selectedNuke = nukes[i];
@@ -131,7 +135,7 @@ for (const i in nukes) {
             const alertTxt = document.createTextNode(`Where do you want to launch your ${nukes[i].name} with a blast yield of ${nukes[i].blastYield} megatons`);
 
             alert.appendChild(alertTxt);
-            alert.setAttribute('class', 'alert alert-danger my-2');
+            alert.setAttribute('class', 'alert alert-primary my-2');
             alert.setAttribute('role', 'alert');
             alert.setAttribute('id', 'alert');
 
@@ -179,18 +183,26 @@ for (const i in nukes) {
             const title = document.createElement("H5");
             const titleTxt = document.createTextNode(nukes[i].name);
             title.appendChild(titleTxt);
-            title.setAttribute('class', 'card-title');
+            title.setAttribute('class', 'card-title text-primary');
 
             body.appendChild(title);
 
             const contentBody = document.createElement("P");
             const contentTxt1 = document.createTextNode(`Produced in : ${nukes[i].yearProduced}`);
+            const newLine1 = document.createElement("BR");
             const contentTxt2 = document.createTextNode(`From : ${nukes[i].country}`);
+            const newLine2 = document.createElement("BR");
             const contentTxt3 = document.createTextNode(`Blast yield : ${nukes[i].blastYield} megatons`);
+            const newLine3 = document.createElement("BR");
+            const newLine4 = document.createElement("BR");
             const contentTxt4 = document.createTextNode(`${nukes[i].description}`);
             contentBody.appendChild(contentTxt1);
+            contentBody.appendChild(newLine1);
             contentBody.appendChild(contentTxt2);
+            contentBody.appendChild(newLine2);
             contentBody.appendChild(contentTxt3);
+            contentBody.appendChild(newLine3);
+            contentBody.appendChild(newLine4);
             contentBody.appendChild(contentTxt4);
             contentBody.setAttribute('class', 'card-text');
 
@@ -201,6 +213,13 @@ for (const i in nukes) {
                 const testSiteTxt = document.createTextNode("View Test Site");
                 testSite.appendChild(testSiteTxt);
                 testSite.setAttribute('class', 'btn btn-outline-primary');
+
+                testSite.addEventListener('click', () => {
+                   selectVisibleLayer('label');
+
+                   view.setCenter(fromLonLat([nukes[i].lon, nukes[i].lat]));
+                   view.setZoom(15);
+                });
 
                 body.appendChild(testSite);
             }
