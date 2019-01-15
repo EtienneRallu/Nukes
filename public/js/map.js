@@ -1,3 +1,7 @@
+import {Map, View} from 'ol';
+import TileLayer from 'ol/layer/Tile';
+import XYZ from 'ol/source/XYZ';
+
 let isOSMDisplayed = true;
 let isBingDisplayed = false;
 let isPopDensDisplayed = false;
@@ -53,15 +57,28 @@ getUserPosition()
          * Generating the map
          * @type {ol.Map}
          */
-        let map = new ol.Map({
+        new Map({
             target: 'map-container',
             layers: [
                 mapLayer,
                 densityWMSLayer,
             ],
             view: view,
-        });
+      });
 });
+
+function selectOSM() {
+    console.log('Clicked OSM');
+    
+}
+
+function selectBing() {
+
+}
+
+function selectPopDensity() {
+    isPopDensDisplayed = !isPopDensDisplayed;
+}
 
 /**
  *
@@ -92,17 +109,4 @@ function getUserPosition() {
         }
 
     });
-}
-
-function selectOSM() {
-    console.log('Clicked OSM');
-    
-}
-
-function selectBing() {
-
-}
-
-function selectPopDensity() {
-    isPopDensDisplayed = !isPopDensDisplayed;
 }

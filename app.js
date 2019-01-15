@@ -16,8 +16,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/js', express.static(__dirname + '/node_modules/bootstrap/dist/js'));
 // jQuery
 app.use('/js', express.static(__dirname + '/node_modules/jquery/dist'));
-// Openlayers
-app.use('/js', express.static(__dirname + '/node_modules/openlayers/dist'));
 // Custom JS
 app.use('/js', express.static(__dirname + '/public/js'));
 
@@ -25,7 +23,7 @@ app.use('/js', express.static(__dirname + '/public/js'));
 // Bootstrap
 app.use('/css', express.static(__dirname + '/node_modules/bootstrap/dist/css'));
 // Openlayers
-app.use('/css', express.static(__dirname + '/node_modules/openlayers/dist'));
+app.use('/css', express.static(__dirname + '/node_modules/ol'));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
