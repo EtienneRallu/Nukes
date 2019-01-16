@@ -155,8 +155,6 @@ for (const i in nukes) {
     btn
         .addEventListener('click', () => {
 
-            selectedNuke = nukes[i];
-
             /*
             Setting the alert
              */
@@ -180,10 +178,7 @@ for (const i in nukes) {
             alert.setAttribute('role', 'alert');
             alert.setAttribute('id', 'alert');
 
-            const alertToDelete = document.getElementById('alert');
-            if(alertToDelete) {
-                alertToDelete.parentNode.removeChild(alertToDelete);
-            }
+            removeAlert();
 
             const contentElement = document.getElementById('content');
             contentElement.insertBefore(alert, contentElement.childNodes[0]);
@@ -192,18 +187,13 @@ for (const i in nukes) {
             Resetting the colours
              */
 
-            for (const j in nukes) {
-                document.getElementById(nukes[j].name).setAttribute('class', 'btn btn-outline-warning mx-1 my-1');
-                if (j === i) {
-                    document.getElementById(nukes[j].name).setAttribute('class', 'btn btn-outline-danger mx-1 my-1');
-                }
-            }
+            unSelectNuke(i);
+
+            selectedNuke = nukes[i];
 
             /*
             Setting the card
              */
-
-            removeCard();
 
             const card = document.createElement("DIV");
             card.setAttribute('class', 'card my-3');
@@ -375,7 +365,7 @@ function createPin(coordinates) {
 
         let fireball = new Feature({
             geometry: new Circle(coordinates, calcRadius.fireball/conversionValue),
-            name: 'Complete Damage',
+            name: 'Fireball Damage',
         });
 
         fireball.setStyle(new Style({
@@ -384,7 +374,7 @@ function createPin(coordinates) {
 
         let airBlast = new Feature({
             geometry: new Circle(coordinates, calcRadius.airBlast/conversionValue),
-            name: 'Complete Damage',
+            name: 'Airblast Damage',
         });
 
         airBlast.setStyle(new Style({
@@ -393,11 +383,20 @@ function createPin(coordinates) {
 
         let thermal = new Feature({
             geometry: new Circle(coordinates, calcRadius.thermal/conversionValue),
-            name: 'Complete Damage',
+            name: 'Thermal Damage',
         });
 
         geocode(coordinates)
             .then((geonames) => {
+
+                previousNukes.push({
+                    name: selectedNuke.name,
+                    target: geonames.adminName1,
+                    country: geonames.countryName,
+                    fireball: calcRadius.fireball,
+                    airBlast: calcRadius.airBlast,
+                    thermal: calcRadius.thermal,
+                });
 
                 document.getElementById('alert-heading').innerHTML = `${selectedNuke.name} dropped in ${geonames.countryName}`;
                 document.getElementById('alert-content').innerHTML =
@@ -410,19 +409,14 @@ function createPin(coordinates) {
                 /*
                 Resetting the colours
                  */
-
-                selectedNuke = null;
-                removeCard();
-
-                for (const j in nukes) {
-                    document.getElementById(nukes[j].name).setAttribute('class', 'btn btn-outline-warning mx-1 my-1');
-                }
+                unSelectNuke();
+                listPreviousNukes();
 
                 vectorSource.addFeatures([iconFeature, fireball, airBlast, thermal]);
 
             })
             .catch(() => {
-                alert('unable to proceed to the launch! Please retry');
+                alert('Launch Cancelled! Something went wrong! Please try again');
         });
 
     } else {
@@ -453,14 +447,32 @@ function calculateBlastRadius(blastYield) {
 }
 
 /**
- * Remove the card from the layout
+ * Unselect the selected nuke
  */
 
-function removeCard() {
+function unSelectNuke(i) {
+
+    selectedNuke = null;
+
     const cardToDelete = document.getElementById('card');
     if(cardToDelete) {
         cardToDelete.parentNode.removeChild(cardToDelete);
     }
+
+    if(i) {
+        for (const j in nukes) {
+            document.getElementById(nukes[j].name).setAttribute('class', 'btn btn-outline-warning mx-1 my-1');
+            if (j === i) {
+                document.getElementById(nukes[j].name).setAttribute('class', 'btn btn-outline-danger mx-1 my-1');
+            }
+        }
+    } else {
+
+        for (const j in nukes) {
+            document.getElementById(nukes[j].name).setAttribute('class', 'btn btn-outline-warning mx-1 my-1');
+        }
+    }
+
 }
 
 /**
@@ -491,4 +503,121 @@ function geocode(coordinates) {
 
     });
 
+}
+
+/**
+ * List all previously dropped nukes and display a button to reset
+ */
+
+function listPreviousNukes() {
+
+    if (previousNukes) {
+        if (previousNukes.length > 0) {
+            const resetButtonExist = document.getElementById('reset');
+            const previous = document.getElementById('previous');
+            const previousList= document.createElement("DIV");
+
+            previousList.setAttribute('id', 'previous-list');
+
+            if (!resetButtonExist) {
+
+                document.getElementById('previous-title').innerHTML = 'Previously dropped nukes';
+                const resetBtn = document.createElement("BUTTON");
+                const resetBtnTxt = document.createTextNode('Reset all nukes');
+
+                resetBtn.appendChild(resetBtnTxt);
+                resetBtn.setAttribute('id', 'reset');
+                resetBtn.setAttribute('class', 'btn btn-danger btn-block');
+
+                resetBtn.addEventListener('click', () => {
+                    resetNukes();
+                });
+
+                previousList.appendChild(resetBtn);
+            }
+
+            previousNukes.forEach(nuke => {
+                const ul = document.createElement("UL");
+                const ilTitle = document.createElement("IL");
+                const il2 = document.createElement("IL");
+                const il3 = document.createElement("IL");
+                const il4 = document.createElement("IL");
+                const il5 = document.createElement("IL");
+                const il6 = document.createElement("IL");
+
+                ilTitle.innerHTML = `Nuke : ${nuke.name}`;
+                il2.innerHTML = `Target : ${nuke.target}`;
+                il3.innerHTML = `Country : ${nuke.country}`;
+                il4.innerHTML = `Fireball : ${nuke.fireball} meters`;
+                il5.innerHTML = `Air Blast : ${nuke.airBlast} meters`;
+                il6.innerHTML = `Thermal Damage : ${nuke.thermal} meters`;
+
+                ul.setAttribute('class', 'list-group my-4');
+                ul.setAttribute('id', nuke.name);
+
+                ilTitle.setAttribute('class', 'list-group-item active');
+                il2.setAttribute('class', 'list-group-item');
+                il3.setAttribute('class', 'list-group-item');
+                il4.setAttribute('class', 'list-group-item');
+                il5.setAttribute('class', 'list-group-item');
+                il6.setAttribute('class', 'list-group-item');
+
+                ul
+                    .appendChild(ilTitle);
+                ul
+                    .appendChild(il2);
+                ul
+                    .appendChild(il3);
+                ul
+                    .appendChild(il4);
+                ul
+                    .appendChild(il5);
+                ul
+                    .appendChild(il6);
+
+                previousList.appendChild(ul);
+            });
+
+            previous.appendChild(previousList);
+        } else {
+            resetNukesList();
+
+        }
+    } else {
+        resetNukesList();
+    }
+
+}
+
+/**
+ * Reset all nukes already in the app
+ */
+
+function resetNukes() {
+    previousNukes = [];
+
+    unSelectNuke();
+    removeAlert();
+
+    vectorSource.clear();
+
+    resetNukesList();
+}
+
+/**
+ * Reset the displayed list of nukes
+ */
+
+function resetNukesList() {
+
+    document.getElementById('previous-title').innerHTML = 'No nukes dropped yet';
+    document.getElementById('previous-list').remove();
+
+}
+
+function removeAlert() {
+    const alertToDelete = document.getElementById('alert');
+    if(alertToDelete) {
+        alertToDelete.parentNode.removeChild(alertToDelete);
+    }
 }
