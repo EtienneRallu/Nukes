@@ -10,7 +10,6 @@ import Point from 'ol/geom/Point';
 import Circle from 'ol/geom/Circle';
 import Icon from 'ol/style/Icon';
 import Style from 'ol/style/Style';
-import Fill from 'ol/style/Fill';
 import Stroke from 'ol/style/Stroke';
 import VectorSource from 'ol/source/Vector';
 
@@ -154,6 +153,7 @@ for (const i in nukes) {
      */
     btn
         .addEventListener('click', () => {
+            selectedNuke = nukes[i];
 
             /*
             Setting the alert
@@ -188,8 +188,6 @@ for (const i in nukes) {
              */
 
             unSelectNuke(i);
-
-            selectedNuke = nukes[i];
 
             /*
             Setting the card
@@ -346,14 +344,55 @@ function createPin(coordinates) {
 
     if(selectedNuke) {
 
-        const calcRadius = calculateBlastRadius(selectedNuke.blastYield);
+        const tempNuke = selectedNuke;
+        selectedNuke = null;
+
+        const calcRadius = calculateBlastRadius(tempNuke.blastYield);
         const conversionValue = 0.685;
 
+        getPopulationKilled(coordinates, calcRadius)
+            .then(killed => {
 
+                geocode(coordinates)
+                    .then((geonames) => {
+
+                        const nukeToPush = {
+                            name: tempNuke.name,
+                            target: geonames.adminName1,
+                            country: geonames.countryName,
+                            fireball: calcRadius.fireball,
+                            airBlast: calcRadius.airBlast,
+                            thermal: calcRadius.thermal,
+                        };
+
+                        document.getElementById('alert-heading').innerHTML = `${tempNuke.name} dropped in ${geonames.countryName}`;
+                        document.getElementById('alert-content').innerHTML =
+                            `Nuclear detonation successful in ${geonames.adminName1} in ${geonames.countryName} 
+                where you launched a ${tempNuke.name} with a blast yield of ${tempNuke.blastYield} megatons. 
+                <hr/> The fireball as a radius of ${calcRadius.fireball} meters and killing ${killed.fireball} persons.
+                <hr/> The air blast has a radius of ${calcRadius.airBlast} meters and killing ${killed.airBlast} persons. 
+                <hr/> The thermal radius is of ${calcRadius.thermal} meters and killing ${killed.thermal} persons`;
+
+                        document.getElementById('alert').setAttribute('class', 'alert alert-success my-2');
+
+                        /*
+                        Resetting the colours
+                         */
+                        unSelectNuke();
+                        listPreviousNukes(nukeToPush);
+
+                        vectorSource.addFeatures([iconFeature, fireball, airBlast, thermal]);
+
+                    })
+                    .catch((err) => {
+                        console.log(err)
+                        alert('Launch Cancelled! Something went wrong! Please try again');
+                    });
+            });
 
         let iconFeature = new Feature({
             geometry: new Point(coordinates),
-            name: selectedNuke.name,
+            name: tempNuke.name,
         });
 
         iconFeature.setStyle(new Style({
@@ -384,39 +423,6 @@ function createPin(coordinates) {
         let thermal = new Feature({
             geometry: new Circle(coordinates, calcRadius.thermal/conversionValue),
             name: 'Thermal Damage',
-        });
-
-        geocode(coordinates)
-            .then((geonames) => {
-
-                previousNukes.push({
-                    name: selectedNuke.name,
-                    target: geonames.adminName1,
-                    country: geonames.countryName,
-                    fireball: calcRadius.fireball,
-                    airBlast: calcRadius.airBlast,
-                    thermal: calcRadius.thermal,
-                });
-
-                document.getElementById('alert-heading').innerHTML = `${selectedNuke.name} dropped in ${geonames.countryName}`;
-                document.getElementById('alert-content').innerHTML =
-                `Nuclear detonation successful in ${geonames.adminName1} in ${geonames.countryName} 
-                where you launched a ${selectedNuke.name} with a blast yield of ${selectedNuke.blastYield} megatons. The fireball as a radius of ${calcRadius.fireball} meters.
-                The air blast has a radius of ${calcRadius.airBlast} meters and the thermal radius is of ${calcRadius.thermal} meters`;
-
-                document.getElementById('alert').setAttribute('class', 'alert alert-success my-2');
-
-                /*
-                Resetting the colours
-                 */
-                unSelectNuke();
-                listPreviousNukes();
-
-                vectorSource.addFeatures([iconFeature, fireball, airBlast, thermal]);
-
-            })
-            .catch(() => {
-                alert('Launch Cancelled! Something went wrong! Please try again');
         });
 
     } else {
@@ -452,8 +458,6 @@ function calculateBlastRadius(blastYield) {
 
 function unSelectNuke(i) {
 
-    selectedNuke = null;
-
     const cardToDelete = document.getElementById('card');
     if(cardToDelete) {
         cardToDelete.parentNode.removeChild(cardToDelete);
@@ -470,38 +474,9 @@ function unSelectNuke(i) {
 
         for (const j in nukes) {
             document.getElementById(nukes[j].name).setAttribute('class', 'btn btn-outline-warning mx-1 my-1');
+            selectedNuke = null;
         }
     }
-
-}
-
-/**
- * Geocode for given coordinates
- * @param coordinates
- * @returns {Promise<json>}
- */
-
-function geocode(coordinates) {
-
-    const coord = toLonLat(coordinates);
-
-    return new Promise ((resolve, reject) => {
-        fetch(`http://api.geonames.org/findNearbyJSON?lat=${coord[1]}&lng=${coord[0]}&username=voyage`)
-            .then(res => {
-                if (!res) {
-                    reject();
-                }
-
-                return res.json();
-            })
-            .then(data => {
-                resolve(data.geonames[0]);
-            })
-            .catch(() =>
-                reject()
-            )
-
-    });
 
 }
 
@@ -509,15 +484,26 @@ function geocode(coordinates) {
  * List all previously dropped nukes and display a button to reset
  */
 
-function listPreviousNukes() {
+function listPreviousNukes(nukeToPush) {
+
+    previousNukes.push(nukeToPush);
 
     if (previousNukes) {
         if (previousNukes.length > 0) {
             const resetButtonExist = document.getElementById('reset');
-            const previous = document.getElementById('previous');
-            const previousList= document.createElement("DIV");
+            const previousListExist = document.getElementById('previous-list');
+            let previousList;
+            if (previousListExist) {
+                while (previousListExist.firstChild) {
+                    previousListExist.removeChild(previousListExist.firstChild);
+                    previousList = previousListExist;
+                }
+            } else {
+                previousList = document.createElement("DIV");
+                previousList.setAttribute('id', 'previous-list');
+            }
 
-            previousList.setAttribute('id', 'previous-list');
+            const previous = document.getElementById('previous');
 
             if (!resetButtonExist) {
 
@@ -533,10 +519,11 @@ function listPreviousNukes() {
                     resetNukes();
                 });
 
-                previousList.appendChild(resetBtn);
+                previous.appendChild(resetBtn);
             }
 
             previousNukes.forEach(nuke => {
+
                 const ul = document.createElement("UL");
                 const ilTitle = document.createElement("IL");
                 const il2 = document.createElement("IL");
@@ -615,9 +602,135 @@ function resetNukesList() {
 
 }
 
+/**
+ * Remove the alert on the screen
+ */
+
 function removeAlert() {
     const alertToDelete = document.getElementById('alert');
     if(alertToDelete) {
         alertToDelete.parentNode.removeChild(alertToDelete);
     }
+}
+
+/**
+ * Return the population killed in the given radius
+ * @param coordinates
+ * @param calcRadius
+ * @returns {Promise<JSON>}
+ */
+
+function getPopulationKilled(coordinates, calcRadius) {
+
+    let response = {
+        fireball: null,
+        airBlast: null,
+        thermal: null,
+    };
+
+    let fRate = 1;
+    let aRate = 0.99;
+    let tRate = 0.5;
+
+    const fRadius = calcRadius.fireball / 1000;
+    const aRadius = calcRadius.airBlast / 1000;
+    const tRadius = calcRadius.thermal / 1000;
+
+    return new Promise ((resolve) => {
+        getPopulationInRadius(coordinates, fRadius)
+            .then(fPop => {
+                response.fireball = Math.floor(fPop * fRate);
+
+                getPopulationInRadius(coordinates, aRadius)
+                    .then(aPop => {
+                        response.airBlast = Math.floor(aPop * aRate);
+
+                        getPopulationInRadius(coordinates, tRadius)
+                            .then(tPop => {
+                                response.thermal = Math.floor(tPop * tRate);
+                                resolve(response);
+                            })
+                            .catch(() => {
+                                resolve(response);
+                            });
+                    })
+                    .catch(() => {
+                        resolve(response);
+                    });
+            })
+            .catch(() => {
+                resolve(response);
+            });
+
+    });
+}
+
+/**
+ * Call the geonames API to get all the populated places in the given radius and return the total sum
+ * @param coordinates
+ * @param radius
+ * @returns {Promise<Number>}
+ */
+
+function getPopulationInRadius(coordinates, radius) {
+
+    const coord = toLonLat(coordinates);
+
+    return new Promise ((resolve, reject) => {
+        fetch(`http://api.geonames.org/findNearbyPlaceNameJSON?lat=${coord[1]}&lng=${coord[0]}&radius=${radius}&username=Boontee`)
+            .then(res => {
+                if (!res) {
+                    reject(null);
+                }
+
+                return res.json();
+            })
+            .then(data => {
+
+                let pop = 0;
+
+                data
+                    .geonames
+                    .forEach(geoname => {
+                       if (geoname) {
+                           if (geoname.population) {
+                               pop+=geoname.population;
+                           }
+                       }
+                    });
+
+                resolve(pop);
+            })
+            .catch(() =>
+                reject(null)
+            )
+    });
+
+}
+
+/**
+ * Geocode for given coordinates
+ * @param coordinates
+ * @returns {Promise<json>}
+ */
+
+function geocode(coordinates) {
+    const coord = toLonLat(coordinates);
+
+    return new Promise ((resolve, reject) => {
+        fetch(`http://api.geonames.org/findNearbyJSON?lat=${coord[1]}&lng=${coord[0]}&username=voyage`)
+            .then(res => {
+                if (!res) {
+                    reject();
+                }
+                return res.json();
+            })
+            .then(data => {
+                resolve(data.geonames[0]);
+            })
+            .catch((err) => {
+                reject()
+            })
+
+    });
 }
