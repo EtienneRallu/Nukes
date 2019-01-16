@@ -661,7 +661,6 @@ function getPopulationKilled(coordinates, calcRadius) {
                 } else {
                     getPopulationClosest(coordinates)
                         .then(cPop => {
-                            console.log('Called closest one', cPop)
                             const coordinationValue = 0.05 / Math.pow(cPop.distance, 2);
                             response.fireball = Math.floor(cPop.population * fRate * coordinationValue);
                             response.airBlast = Math.floor(cPop.population * aRate * coordinationValue);
@@ -743,9 +742,6 @@ function getPopulationClosest(coordinates) {
                 return res.json();
             })
             .then(data => {
-
-                console.log(data)
-
                 resolve({
                         population: data.geonames[0].population,
                         distance: data.geonames[0].distance
