@@ -1,5 +1,5 @@
 import {Map, View} from 'ol';
-import {fromLonLat} from 'ol/proj';
+import {fromLonLat, toLonLat} from 'ol/proj';
 import {Vector as VectorLayer} from 'ol/layer.js';
 import TileLayer from 'ol/layer/Tile';
 import TileWMS from 'ol/source/TileWMS';
@@ -19,6 +19,7 @@ const nukes = require('../json/nukes').nukes;
 let layers = [];
 const layersName = ['osm', 'aerial', 'label', 'pop', 'vector'];
 let selectedNuke;
+let previousNukes = [];
 
 /**
  * Creating the OpenStreetMap layer
@@ -160,10 +161,22 @@ for (const i in nukes) {
             Setting the alert
              */
             const alert = document.createElement("DIV");
+            const alertTitle = document.createElement("H4");
+            const alertTitleTxt = document.createTextNode('Launch you nuke');
+            const alertContent = document.createElement("P");
             const alertTxt = document.createTextNode(`Where do you want to launch your ${nukes[i].name} with a blast yield of ${nukes[i].blastYield} megatons`);
 
-            alert.appendChild(alertTxt);
-            alert.setAttribute('class', 'alert alert-primary my-2');
+            alertTitle.appendChild(alertTitleTxt);
+            alertTitle.setAttribute('class', 'alert-heading');
+            alertTitle.setAttribute('id', 'alert-heading');
+
+            alertContent.appendChild(alertTxt);
+            alertContent.setAttribute('id', 'alert-content');
+            alertContent.setAttribute('class', 'my-3');
+
+            alert.appendChild(alertTitle);
+            alert.appendChild(alertContent);
+            alert.setAttribute('class', 'alert alert-warning my-2');
             alert.setAttribute('role', 'alert');
             alert.setAttribute('id', 'alert');
 
@@ -190,10 +203,7 @@ for (const i in nukes) {
             Setting the card
              */
 
-            const cardToDelete = document.getElementById('card');
-            if(cardToDelete) {
-                cardToDelete.parentNode.removeChild(cardToDelete);
-            }
+            removeCard();
 
             const card = document.createElement("DIV");
             card.setAttribute('class', 'card my-3');
@@ -337,6 +347,11 @@ function getUserPosition() {
     });
 }
 
+/**
+ * Create a pin on the given coordinates and get information place
+ * @param coordinates
+ */
+
 function createPin(coordinates) {
 
     if(selectedNuke) {
@@ -344,10 +359,11 @@ function createPin(coordinates) {
         const calcRadius = calculateBlastRadius(selectedNuke.blastYield);
         const conversionValue = 0.685;
 
-        //TODO : Add geocoding
+
+
         let iconFeature = new Feature({
             geometry: new Point(coordinates),
-            name: 'Foo',
+            name: selectedNuke.name,
         });
 
         iconFeature.setStyle(new Style({
@@ -380,7 +396,35 @@ function createPin(coordinates) {
             name: 'Complete Damage',
         });
 
-        vectorSource.addFeatures([iconFeature, fireball, airBlast, thermal]);
+        geocode(coordinates)
+            .then((geonames) => {
+
+                document.getElementById('alert-heading').innerHTML = `${selectedNuke.name} dropped in ${geonames.countryName}`;
+                document.getElementById('alert-content').innerHTML =
+                `Nuclear detonation successful in ${geonames.adminName1} in ${geonames.countryName} 
+                where you launched a ${selectedNuke.name} with a blast yield of ${selectedNuke.blastYield} megatons. The fireball as a radius of ${calcRadius.fireball} meters.
+                The air blast has a radius of ${calcRadius.airBlast} meters and the thermal radius is of ${calcRadius.thermal} meters`;
+
+                document.getElementById('alert').setAttribute('class', 'alert alert-success my-2');
+
+                /*
+                Resetting the colours
+                 */
+
+                selectedNuke = null;
+                removeCard();
+
+                for (const j in nukes) {
+                    document.getElementById(nukes[j].name).setAttribute('class', 'btn btn-outline-warning mx-1 my-1');
+                }
+
+                vectorSource.addFeatures([iconFeature, fireball, airBlast, thermal]);
+
+            })
+            .catch(() => {
+                alert('unable to proceed to the launch! Please retry');
+        });
+
     } else {
         alert('Select a nuke to launch on the world');
     }
@@ -389,7 +433,7 @@ function createPin(coordinates) {
 /**
  * Calculating the different radius of the fireball, blast, thermal damage and light damage for an explosion
  * @param blastYield
- * @returns {{fireball: number, airBlast: number, thermal: number, light: number}}
+ * @returns {{fireball: number, airBlast: number, thermal: number}}
  */
 
 function calculateBlastRadius(blastYield) {
@@ -406,4 +450,45 @@ function calculateBlastRadius(blastYield) {
         'airBlast': airBlast,
         'thermal': thermal,
     }
+}
+
+/**
+ * Remove the card from the layout
+ */
+
+function removeCard() {
+    const cardToDelete = document.getElementById('card');
+    if(cardToDelete) {
+        cardToDelete.parentNode.removeChild(cardToDelete);
+    }
+}
+
+/**
+ * Geocode for given coordinates
+ * @param coordinates
+ * @returns {Promise<json>}
+ */
+
+function geocode(coordinates) {
+
+    const coord = toLonLat(coordinates);
+
+    return new Promise ((resolve, reject) => {
+        fetch(`http://api.geonames.org/findNearbyJSON?lat=${coord[1]}&lng=${coord[0]}&username=voyage`)
+            .then(res => {
+                if (!res) {
+                    reject();
+                }
+
+                return res.json();
+            })
+            .then(data => {
+                resolve(data.geonames[0]);
+            })
+            .catch(() =>
+                reject()
+            )
+
+    });
+
 }
