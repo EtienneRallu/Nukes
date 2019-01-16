@@ -350,6 +350,41 @@ function createPin(coordinates) {
         const calcRadius = calculateBlastRadius(tempNuke.blastYield);
         const conversionValue = 0.685;
 
+        let iconFeature = new Feature({
+            geometry: new Point(coordinates),
+            name: tempNuke.name,
+        });
+
+        iconFeature.setStyle(new Style({
+            image: new Icon({
+                src: 'http://www.mistercosmic.com/images/Nuke_256.png',
+                scale: 0.25,
+            })
+        }));
+
+        let fireball = new Feature({
+            geometry: new Circle(coordinates, calcRadius.fireball/conversionValue),
+            name: 'Fireball Damage',
+        });
+
+        fireball.setStyle(new Style({
+            stroke: new Stroke({color: [221, 18, 4]})
+        }));
+
+        let airBlast = new Feature({
+            geometry: new Circle(coordinates, calcRadius.airBlast/conversionValue),
+            name: 'Airblast Damage',
+        });
+
+        airBlast.setStyle(new Style({
+            stroke: new Stroke({color: [232, 150, 9]})
+        }));
+
+        let thermal = new Feature({
+            geometry: new Circle(coordinates, calcRadius.thermal/conversionValue),
+            name: 'Thermal Damage',
+        });
+
         getPopulationKilled(coordinates, calcRadius)
             .then(killed => {
 
@@ -385,45 +420,9 @@ function createPin(coordinates) {
 
                     })
                     .catch((err) => {
-                        console.log(err)
                         alert('Launch Cancelled! Something went wrong! Please try again');
                     });
             });
-
-        let iconFeature = new Feature({
-            geometry: new Point(coordinates),
-            name: tempNuke.name,
-        });
-
-        iconFeature.setStyle(new Style({
-            image: new Icon({
-                src: 'http://www.mistercosmic.com/images/Nuke_256.png',
-                scale: 0.25,
-            })
-        }));
-
-        let fireball = new Feature({
-            geometry: new Circle(coordinates, calcRadius.fireball/conversionValue),
-            name: 'Fireball Damage',
-        });
-
-        fireball.setStyle(new Style({
-            stroke: new Stroke({color: [221, 18, 4]})
-        }));
-
-        let airBlast = new Feature({
-            geometry: new Circle(coordinates, calcRadius.airBlast/conversionValue),
-            name: 'Airblast Damage',
-        });
-
-        airBlast.setStyle(new Style({
-            stroke: new Stroke({color: [232, 150, 9]})
-        }));
-
-        let thermal = new Feature({
-            geometry: new Circle(coordinates, calcRadius.thermal/conversionValue),
-            name: 'Thermal Damage',
-        });
 
     } else {
         alert('Select a nuke to launch on the world');
@@ -599,6 +598,7 @@ function resetNukesList() {
 
     document.getElementById('previous-title').innerHTML = 'No nukes dropped yet';
     document.getElementById('previous-list').remove();
+    document.getElementById('reset').remove();
 
 }
 
@@ -629,8 +629,8 @@ function getPopulationKilled(coordinates, calcRadius) {
     };
 
     let fRate = 1;
-    let aRate = 0.99;
-    let tRate = 0.5;
+    let aRate = 0.95;
+    let tRate = 0.35;
 
     const fRadius = calcRadius.fireball / 1000;
     const aRadius = calcRadius.airBlast / 1000;
@@ -641,22 +641,37 @@ function getPopulationKilled(coordinates, calcRadius) {
             .then(fPop => {
                 response.fireball = Math.floor(fPop * fRate);
 
-                getPopulationInRadius(coordinates, aRadius)
-                    .then(aPop => {
-                        response.airBlast = Math.floor(aPop * aRate);
+                if(response.fireball > 0) {
+                    getPopulationInRadius(coordinates, aRadius)
+                        .then(aPop => {
+                            response.airBlast = Math.floor(aPop * aRate);
 
-                        getPopulationInRadius(coordinates, tRadius)
-                            .then(tPop => {
-                                response.thermal = Math.floor(tPop * tRate);
-                                resolve(response);
-                            })
-                            .catch(() => {
-                                resolve(response);
-                            });
-                    })
-                    .catch(() => {
-                        resolve(response);
-                    });
+                            getPopulationInRadius(coordinates, tRadius)
+                                .then(tPop => {
+                                    response.thermal = Math.floor(tPop * tRate);
+                                    resolve(response);
+                                })
+                                .catch(() => {
+                                    resolve(response);
+                                });
+                        })
+                        .catch(() => {
+                            resolve(response);
+                        });
+                } else {
+                    getPopulationClosest(coordinates)
+                        .then(cPop => {
+                            console.log('Called closest one', cPop)
+                            const coordinationValue = 0.05 / Math.pow(cPop.distance, 2);
+                            response.fireball = Math.floor(cPop.population * fRate * coordinationValue);
+                            response.airBlast = Math.floor(cPop.population * aRate * coordinationValue);
+                            response.thermal = Math.floor(cPop.population * tRate * coordinationValue);
+                            resolve(response);
+                        })
+                        .catch(() => {
+                            resolve(response);
+                        });
+                }
             })
             .catch(() => {
                 resolve(response);
@@ -677,7 +692,7 @@ function getPopulationInRadius(coordinates, radius) {
     const coord = toLonLat(coordinates);
 
     return new Promise ((resolve, reject) => {
-        fetch(`http://api.geonames.org/findNearbyPlaceNameJSON?lat=${coord[1]}&lng=${coord[0]}&radius=${radius}&username=Boontee`)
+        fetch(`http://api.geonames.org/findNearbyPlaceNameJSON?lat=${coord[1]}&lng=${coord[0]}&radius=${radius}&maxRows=50&username=Boontee`)
             .then(res => {
                 if (!res) {
                     reject(null);
@@ -700,6 +715,41 @@ function getPopulationInRadius(coordinates, radius) {
                     });
 
                 resolve(pop);
+            })
+            .catch(() =>
+                reject(null)
+            )
+    });
+
+}
+
+/**
+ * Call the geonames API to get the closest most populated place
+ * @param coordinates
+ * @returns {Promise<Number>}
+ */
+
+function getPopulationClosest(coordinates) {
+
+    const coord = toLonLat(coordinates);
+
+    return new Promise ((resolve, reject) => {
+        fetch(`http://api.geonames.org/findNearbyPlaceNameJSON?lat=${coord[1]}&lng=${coord[0]}&maxRows=1&fcode=PPLA&fcode=PPLA2&fcode=PPLA3&fcode=PPLA4&username=voyage`)
+            .then(res => {
+                if (!res) {
+                    reject(null);
+                }
+
+                return res.json();
+            })
+            .then(data => {
+
+                console.log(data)
+
+                resolve({
+                        population: data.geonames[0].population,
+                        distance: data.geonames[0].distance
+                });
             })
             .catch(() =>
                 reject(null)
