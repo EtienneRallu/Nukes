@@ -162,7 +162,7 @@ for (const i in nukes) {
             const alertTitle = document.createElement("H4");
             const alertTitleTxt = document.createTextNode('Launch you nuke');
             const alertContent = document.createElement("P");
-            const alertTxt = document.createTextNode(`Where do you want to launch your ${nukes[i].name} with a blast yield of ${nukes[i].blastYield} megatons`);
+            const alertTxt = document.createTextNode(`Where do you want to launch your ${nukes[i].name} with a blast yield of ${nukes[i].blastYield} megatons of TNT`);
 
             alertTitle.appendChild(alertTitleTxt);
             alertTitle.setAttribute('class', 'alert-heading');
@@ -630,7 +630,7 @@ function getPopulationKilled(coordinates, calcRadius) {
 
     let fRate = 1;
     let aRate = 0.95;
-    let tRate = 0.35;
+    let tRate = 0.25;
 
     const fRadius = calcRadius.fireball / 1000;
     const aRadius = calcRadius.airBlast / 1000;
@@ -661,7 +661,7 @@ function getPopulationKilled(coordinates, calcRadius) {
                 } else {
                     getPopulationClosest(coordinates)
                         .then(cPop => {
-                            const coordinationValue = 0.05 / Math.pow(cPop.distance, 2);
+                            const coordinationValue = 0.05 / Math.pow(cPop.distance, 3);
                             response.fireball = Math.floor(cPop.population * fRate * coordinationValue);
                             response.airBlast = Math.floor(cPop.population * aRate * coordinationValue);
                             response.thermal = Math.floor(cPop.population * tRate * coordinationValue);
