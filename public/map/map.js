@@ -691,7 +691,7 @@ function getPopulationInRadius(coordinates, radius) {
     const coord = toLonLat(coordinates);
 
     return new Promise ((resolve, reject) => {
-        fetch(`https://api.geonames.org/findNearbyPlaceNameJSON?lat=${coord[1]}&lng=${coord[0]}&radius=${radius}&maxRows=50&username=Boontee`)
+        fetch(`http://api.geonames.org/findNearbyPlaceNameJSON?lat=${coord[1]}&lng=${coord[0]}&radius=${radius}&maxRows=50&username=Boontee`)
             .then(res => {
                 if (!res) {
                     reject(null);
@@ -733,7 +733,7 @@ function getPopulationClosest(coordinates) {
     const coord = toLonLat(coordinates);
 
     return new Promise ((resolve, reject) => {
-        fetch(`https://api.geonames.org/findNearbyPlaceNameJSON?lat=${coord[1]}&lng=${coord[0]}&maxRows=1&fcode=PPLA&fcode=PPLA2&fcode=PPLA3&fcode=PPLA4&username=voyage`)
+        fetch(`http://api.geonames.org/findNearbyPlaceNameJSON?lat=${coord[1]}&lng=${coord[0]}&maxRows=1&fcode=PPLA&fcode=PPLA2&fcode=PPLA3&fcode=PPLA4&username=voyage`)
             .then(res => {
                 if (!res) {
                     reject(null);
@@ -764,7 +764,7 @@ function geocode(coordinates) {
     const coord = toLonLat(coordinates);
 
     return new Promise ((resolve, reject) => {
-            fetch(`https://api.geonames.org/findNearbyJSON?lat=${coord[1]}&lng=${coord[0]}&username=voyage`)
+            fetch(`http://api.geonames.org/findNearbyJSON?lat=${coord[1]}&lng=${coord[0]}&username=voyage`)
             .then(res => {
                 if (!res) {
                     reject();
