@@ -65,7 +65,7 @@ let densityWMSLayer = new TileLayer({
     visible: false,
     preload: Infinity,
     source: new TileWMS({
-        url: 'http://sedac.ciesin.columbia.edu/geoserver/wms',
+        url: 'https://sedac.ciesin.columbia.edu/geoserver/wms',
         params: {
             'LAYERS': 'gpw-v3:gpw-v3-population-density_2000',
             'TILED': true,
@@ -357,7 +357,7 @@ function createPin(coordinates) {
 
         iconFeature.setStyle(new Style({
             image: new Icon({
-                src: 'http://www.mistercosmic.com/images/Nuke_256.png',
+                src: 'https://www.mistercosmic.com/images/Nuke_256.png',
                 scale: 0.25,
             })
         }));
@@ -691,7 +691,7 @@ function getPopulationInRadius(coordinates, radius) {
     const coord = toLonLat(coordinates);
 
     return new Promise ((resolve, reject) => {
-        fetch(`http://api.geonames.org/findNearbyPlaceNameJSON?lat=${coord[1]}&lng=${coord[0]}&radius=${radius}&maxRows=50&username=Boontee`)
+        fetch(`https://api.geonames.org/findNearbyPlaceNameJSON?lat=${coord[1]}&lng=${coord[0]}&radius=${radius}&maxRows=50&username=Boontee`)
             .then(res => {
                 if (!res) {
                     reject(null);
