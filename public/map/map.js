@@ -65,7 +65,7 @@ let densityWMSLayer = new TileLayer({
     visible: false,
     preload: Infinity,
     source: new TileWMS({
-        url: 'http://sedac.ciesin.columbia.edu/geoserver/wms',
+        url: 'https://sedac.ciesin.columbia.edu/geoserver/wms',
         params: {
             'LAYERS': 'gpw-v3:gpw-v3-population-density_2000',
             'TILED': true,
@@ -162,7 +162,7 @@ for (const i in nukes) {
             const alertTitle = document.createElement("H4");
             const alertTitleTxt = document.createTextNode('Launch you nuke');
             const alertContent = document.createElement("P");
-            const alertTxt = document.createTextNode(`Where do you want to launch your ${nukes[i].name} with a blast yield of ${nukes[i].blastYield} megatons of TNT`);
+            const alertTxt = document.createTextNode(`click on the map to launch your ${nukes[i].name} with a blast yield of ${nukes[i].blastYield} megatons of TNT`);
 
             alertTitle.appendChild(alertTitleTxt);
             alertTitle.setAttribute('class', 'alert-heading');
@@ -297,10 +297,10 @@ function selectVisibleLayer(name) {
     layers[layersName.findIndex(layer => layer === 'vector')].setVisible(true);
     layersName.forEach(layer => {
         if (layer !== 'vector') {
-            document.getElementById(layer).setAttribute('class', 'btn btn-secondary btn-lg');
+            document.getElementById(layer).setAttribute('class', 'col-3 btn btn-secondary btn-lg');
         }
     });
-    document.getElementById(name).setAttribute('class', 'btn btn-primary btn-lg');
+    document.getElementById(name).setAttribute('class', 'col-3 btn btn-primary btn-lg');
     layers[layersName.findIndex(layer => layer === name)].setVisible(true);
 }
 
@@ -357,7 +357,7 @@ function createPin(coordinates) {
 
         iconFeature.setStyle(new Style({
             image: new Icon({
-                src: 'http://www.mistercosmic.com/images/Nuke_256.png',
+                src: 'https://www.mistercosmic.com/images/Nuke_256.png',
                 scale: 0.25,
             })
         }));
@@ -691,7 +691,7 @@ function getPopulationInRadius(coordinates, radius) {
     const coord = toLonLat(coordinates);
 
     return new Promise ((resolve, reject) => {
-        fetch(`http://api.geonames.org/findNearbyPlaceNameJSON?lat=${coord[1]}&lng=${coord[0]}&radius=${radius}&maxRows=50&username=Boontee`)
+        fetch(`https://secure.geonames.org/findNearbyPlaceNameJSON?lat=${coord[1]}&lng=${coord[0]}&radius=${radius}&maxRows=50&username=Boontee`)
             .then(res => {
                 if (!res) {
                     reject(null);
@@ -733,7 +733,7 @@ function getPopulationClosest(coordinates) {
     const coord = toLonLat(coordinates);
 
     return new Promise ((resolve, reject) => {
-        fetch(`http://api.geonames.org/findNearbyPlaceNameJSON?lat=${coord[1]}&lng=${coord[0]}&maxRows=1&fcode=PPLA&fcode=PPLA2&fcode=PPLA3&fcode=PPLA4&username=voyage`)
+        fetch(`https://secure.geonames.org/findNearbyPlaceNameJSON?lat=${coord[1]}&lng=${coord[0]}&maxRows=1&fcode=PPLA&fcode=PPLA2&fcode=PPLA3&fcode=PPLA4&username=voyage`)
             .then(res => {
                 if (!res) {
                     reject(null);
@@ -764,7 +764,7 @@ function geocode(coordinates) {
     const coord = toLonLat(coordinates);
 
     return new Promise ((resolve, reject) => {
-        fetch(`http://api.geonames.org/findNearbyJSON?lat=${coord[1]}&lng=${coord[0]}&username=voyage`)
+            fetch(`https://secure.geonames.org/findNearbyJSON?lat=${coord[1]}&lng=${coord[0]}&username=voyage`)
             .then(res => {
                 if (!res) {
                     reject();
