@@ -4,7 +4,7 @@ A simple tool to show how destructive a nuclear bomb would be. Select your nuke,
 
 #### Deployed version
 
-Visit the online version of the app *URL*
+Visit the online version of the app https://geoinf2.herokuapp.com/ 
 
 #### Contributors
    
