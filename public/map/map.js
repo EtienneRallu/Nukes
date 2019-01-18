@@ -162,7 +162,7 @@ for (const i in nukes) {
             const alertTitle = document.createElement("H4");
             const alertTitleTxt = document.createTextNode('Launch you nuke');
             const alertContent = document.createElement("P");
-            const alertTxt = document.createTextNode(`Where do you want to launch your ${nukes[i].name} with a blast yield of ${nukes[i].blastYield} megatons of TNT`);
+            const alertTxt = document.createTextNode(`click on the map to launch your ${nukes[i].name} with a blast yield of ${nukes[i].blastYield} megatons of TNT`);
 
             alertTitle.appendChild(alertTitleTxt);
             alertTitle.setAttribute('class', 'alert-heading');
@@ -297,10 +297,10 @@ function selectVisibleLayer(name) {
     layers[layersName.findIndex(layer => layer === 'vector')].setVisible(true);
     layersName.forEach(layer => {
         if (layer !== 'vector') {
-            document.getElementById(layer).setAttribute('class', 'btn btn-secondary btn-lg');
+            document.getElementById(layer).setAttribute('class', 'col-3 btn btn-secondary btn-lg');
         }
     });
-    document.getElementById(name).setAttribute('class', 'btn btn-primary btn-lg');
+    document.getElementById(name).setAttribute('class', 'col-3 btn btn-primary btn-lg');
     layers[layersName.findIndex(layer => layer === name)].setVisible(true);
 }
 
@@ -733,7 +733,7 @@ function getPopulationClosest(coordinates) {
     const coord = toLonLat(coordinates);
 
     return new Promise ((resolve, reject) => {
-        fetch(`http://api.geonames.org/findNearbyPlaceNameJSON?lat=${coord[1]}&lng=${coord[0]}&maxRows=1&fcode=PPLA&fcode=PPLA2&fcode=PPLA3&fcode=PPLA4&username=voyage`)
+        fetch(`https://api.geonames.org/findNearbyPlaceNameJSON?lat=${coord[1]}&lng=${coord[0]}&maxRows=1&fcode=PPLA&fcode=PPLA2&fcode=PPLA3&fcode=PPLA4&username=voyage`)
             .then(res => {
                 if (!res) {
                     reject(null);
@@ -764,7 +764,7 @@ function geocode(coordinates) {
     const coord = toLonLat(coordinates);
 
     return new Promise ((resolve, reject) => {
-        fetch(`http://api.geonames.org/findNearbyJSON?lat=${coord[1]}&lng=${coord[0]}&username=voyage`)
+            fetch(`https://api.geonames.org/findNearbyJSON?lat=${coord[1]}&lng=${coord[0]}&username=voyage`)
             .then(res => {
                 if (!res) {
                     reject();

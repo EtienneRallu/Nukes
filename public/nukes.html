@@ -10,44 +10,44 @@
 </head>
 <body>
 
-    <header class="jumbotron bg-primary jumbotron-fluid">
-        <div class="container">
-            <h1 class="display-3 text-white text-center">Get ready to nuke the world !</h1>
-            <p class="lead text-white text-center">Choose your nuke, launch it on the world and count your victims. When you select a nuke you will see three different radius. The smallest is
-            the fireball that's a giant ball of fire hotter than the sun, then the air blast where everything will be destroyed and almost nobody will survive. Finally, the thermal radius where
+<header class="">
+    <div class="container">
+        <h1 class="display-3 text-center">Get ready to nuke the world !</h1>
+        <p class="lead text-center">Choose your nuke, launch it on the world and count your victims. When you select a
+            nuke you will see three different radius. The smallest is
+            the fireball that's a giant ball of fire hotter than the sun, then the air blast where everything will be
+            destroyed and almost nobody will survive. Finally, the thermal radius where
             people will get 3rd degree burns and some buildings would be destroyed.</p>
-        </div>
-    </header>
+    </div>
+</header>
 
-    <div class="container-fluid" id="content">
-        <div class="row">
-            <div class="col-2">
-                <h3 class="text-primary text-left">Choose your layer</h3>
-                <div class="btn-group-vertical" role="group" aria-label="Layers possibility">
-                    <button type="button" class="btn btn-primary btn-lg" id="osm">OpenStreetMap</button>
-                    <button type="button" class="btn btn-secondary btn-lg" id="aerial">Aerial</button>
-                    <button type="button" class="btn btn-secondary btn-lg" id="label">Aerial with Label</button>
-                    <button type="button" class="btn btn-secondary btn-lg" id="pop">Population Density</button>
-                </div>
-            </div>
-
-            <div class="col-10">
-                <div id="map-container"></div>
-            </div>
-        </div>
-        <div id="devices" class="my-4">
-            <h3 class="text-primary text-center">Select your device</h3>
-            <div class="btn-group-horizontal btn-group-sm text-center" role="group" aria-label="Basic example" id="devicesBtn">
-            </div>
-        </div>
-
-        <div id="previous" class="my-4">
-            <h3 class="text-primary text-center" id="previous-title">No nukes dropped yet</h3>
+<div class="container" id="content">
+    <div class="row">
+        <div class="btn-group col-12" role="group" aria-label="Layers possibility">
+            <button type="button" class="btn col-3 btn-primary btn-lg" id="osm">OpenStreetMap</button>
+            <button type="button" class="btn col-3 btn-secondary btn-lg" id="aerial">Aerial</button>
+            <button type="button" class="btn col-3 btn-secondary btn-lg" id="label">Aerial with Label</button>
+            <button type="button" class="btn col-3 btn-secondary btn-lg" id="pop">Population Density</button>
         </div>
     </div>
+    <div class="row">
+        <div class="col-12" id="map-container"></div>
+    </div>
 
-    <script src="/js/jquery.min.js"></script>
-    <script src="/js/bootstrap.min.js"></script>
-    <script src="./js/bundle.js"></script>
+<div id="devices" class="my-4">
+    <h3 class="text-primary text-center">Select your device</h3>
+    <div class="btn-group-horizontal btn-group-sm text-center" role="group" aria-label="Basic example"
+         id="devicesBtn">
+    </div>
+</div>
+
+<div id="previous" class="my-4">
+    <h3 class="text-primary text-center" id="previous-title">No nukes dropped yet</h3>
+</div>
+</div>
+
+<script src="/js/jquery.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="./js/bundle.js"></script>
 </body>
 </html>
