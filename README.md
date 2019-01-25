@@ -56,4 +56,4 @@ Four layers are used on the map :
 
 To reconcile the clicks on the map with the actual location, we use the [GeoName API](https://www.geonames.org/)  
 
-All other geographical calculations and map drawings are custom made and client side. They can be found in the [map.js](public/map/map.js).
+All other geographical calculations and map drawings are custom made and client side. They can be found in the [map.js](public/map/map.js) file.
