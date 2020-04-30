@@ -33,7 +33,7 @@
     "cookie-parser": "^1.4.4",
     "debug": "~2.6.9",
     "express": "~4.16.0",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "nodemon": "^1.19.3",
     "ol": "^5.3.3",
     "webpack": "^4.41.1",
